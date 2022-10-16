@@ -1,74 +1,28 @@
 class Solution {
 public:    
-    // declare a dp
-    
-    int dp[305][15];
-    
-    int helper(vector<int>& arr, int i, int n, int k)
-    {
-        // base case
-        
-        if(i == n && k == 0)
-            return 0;
-        
-        // if exactly k partition is not possible
-        
-        if(k <= 0)
-            return INT_MAX;
-        
-        // if already calculated
-        
-        if(dp[i][k] != -1)
-            return dp[i][k];
-        
-        // maxi will store the maximum of subarray taken
-        
-        int maxi = 0;
-        
-        // mini will store the minimum difficulty
-        
-        int mini = INT_MAX;
-        
-        // partition the array between [i, n - 1] and call for remaining elements
-        
-        for(int j = i; j < n; j++)
-        {
-            // update maxi
-            
-            maxi = max(maxi, arr[j]);
-            
-            // call for remaining elements
-            
-            int temp = helper(arr, j + 1, n, k - 1);
-            
-            // if it possible to partition into exactly k subarrays, then update mini
-            
-            if(temp != INT_MAX)
-            {
-                mini = min(mini, maxi + temp);
+    int solve(int index, vector<int>& a,int d,vector<vector<int>>& dp){
+        int n = a.size();
+        if(d==1){
+            int mx = a[index];
+            for(int i=index;i<n;i++){
+                mx = max(mx,a[i]);
             }
+            return mx;
         }
-        
-        // store the res and return it
-        
-        return dp[i][k] = mini;
+        if(dp[index][d]!=-1) return dp[index][d];
+        int mx = INT_MIN;
+        int ans = INT_MAX;
+        for(int i=index;i<=n-d;i++){
+            mx= max(mx,a[i]);
+            ans = min(ans,mx + solve(i+1,a,d-1,dp));
+        }
+        return dp[index][d] = ans;
+
     }
-    
-    int minDifficulty(vector<int>& arr, int k) {
-        
-        int n = arr.size();
-        
-        // initialize dp with -1
-        
-        memset(dp, -1, sizeof(dp));
-        
-        int mini = helper(arr, 0, n, k);
-        
-        // if it is not possible to partition into exactly k subarrays
-        
-        if(mini == INT_MAX)
-            return -1;
-        
-        return mini;
+    int minDifficulty(vector<int>& jobDifficulty, int d) {
+        int n = jobDifficulty.size();
+        if(n<d) return -1;
+        vector<vector<int>> dp(n+1,vector<int>(d+1,-1));
+        return solve(0,jobDifficulty,d,dp);
     }
 };

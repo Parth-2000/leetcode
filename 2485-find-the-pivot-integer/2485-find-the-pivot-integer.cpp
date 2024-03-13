@@ -1,14 +1,15 @@
 class Solution {
 public:
     int pivotInteger(int n) {
-        int sum = n * (n + 1) / 2;
-        int curr = 0;
+        int i = 1;
+        int j = n;
         if(n == 1) return 1;
-        for(int i = 1; i < n; i++){
-            curr += i;
-            if(curr == (sum - curr + i)){
-                return i;
-            }
+        int sum = n * (n+1) / 2;
+        while(i < j){
+            int mid = (i + j) / 2;
+            if(mid*mid == sum) return mid;
+            else if(mid*mid - sum < 0) i = mid + 1;
+            else j = mid - 1;
         }
         return -1;
     }
